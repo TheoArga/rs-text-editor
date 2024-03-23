@@ -20,4 +20,9 @@ fn main() {
         text.chars().nth(nb).unwrap_or_default(),
         my_first_rope.fetch(nb)
     );
+
+    let r1: Rope = Rope::from_text("string1 ", 2);
+    let r2: Rope = Rope::from_text(" string2 \n", 2);
+    let r3: Rope = Rope::concat(r1, r2);
+    print!("Concatenated rope : {}", r3.to_text())
 }

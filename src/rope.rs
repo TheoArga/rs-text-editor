@@ -1,3 +1,5 @@
+use egui::epaint::text;
+
 pub struct Rope {
     left: Option<Box<Rope>>,
     right: Option<Box<Rope>>,
@@ -61,7 +63,7 @@ impl Rope {
             text = String::from("branch node no text");
         }
 
-        return (text + " : ") + size.as_str() + "\n";
+        return (text + " : ") + &size + "\n";
     }
 
     pub fn to_tree_print(&self) -> String {
@@ -97,5 +99,31 @@ impl Rope {
             (None, None, Some(text), _) => text.chars().nth(ith).unwrap_or('F'),
             (_, _, _, _) => 'F',
         };
+    }
+
+    pub fn weight(&self) -> usize {
+        return match (&self.left, &self.text) {
+            (Some(left), _) => left._weight(),
+            (_, Some(text)) => text.len(),
+            (_, _) => 0,
+        };
+    }
+
+    fn _weight(&self) -> usize {
+        return match (&self.left, &self.right, &self.text) {
+            (Some(left), Some(right), _) => left._weight() + right._weight(),
+            (Some(left), _, _) => left._weight(),
+            (_, _, Some(text)) => text.len(),
+            (_, _, _) => 0,
+        };
+    }
+
+    pub fn concat(r1: Rope, r2: Rope) -> Rope {
+        Rope {
+            weight: r1.weight(),
+            left: Some(Box::new(r1)),
+            right: Some(Box::new(r2)),
+            text: None,
+        }
     }
 }
