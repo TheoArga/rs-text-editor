@@ -17,7 +17,7 @@ fn main() {
     print!(
         "{}th element real : {} ; from rope : {} \n",
         nb,
-        text.chars().nth(nb - 1).unwrap_or_default(),
+        text.chars().nth(nb).unwrap_or_default(),
         my_first_rope.fetch(nb)
     );
 
@@ -38,7 +38,7 @@ fn main() {
     print!(
         "{}th element real : {} ; from rope : {} \n",
         nb2,
-        st3.chars().nth(nb2 - 1).unwrap_or_default(),
+        st3.chars().nth(nb2).unwrap_or_default(),
         r3.fetch(nb2)
     );
 }

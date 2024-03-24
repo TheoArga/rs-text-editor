@@ -7,6 +7,9 @@ pub struct Rope {
     weight: usize,
 }
 
+/**
+ * Characters are 0-indexed for all operations
+ */
 impl Rope {
     pub fn new() -> Rope {
         Rope {
@@ -39,6 +42,31 @@ impl Rope {
                 weight: strings.0.len(),
             }
         }
+    }
+
+    pub fn split_node(&self, split_at: usize) -> (Rope, Rope) {
+        assert!(self.text.is_some());
+        assert!(self.text.unwrap().len() < split_at);
+
+        let t0: String = self.text.unwrap();
+        let t_12: (_, _) = t0.split_at(split_at);
+        let t1: String = t_12.0.to_owned();
+        let t2: String = t_12.1.to_owned();
+
+        (
+            Rope {
+                left: None,
+                right: None,
+                text: Some(t1),
+                weight: t1.len(),
+            },
+            Rope {
+                left: None,
+                right: None,
+                text: Some(t2),
+                weight: t2.len(),
+            },
+        )
     }
 
     pub fn to_text(&self) -> String {
@@ -93,10 +121,10 @@ impl Rope {
     pub fn fetch(&self, ith: usize) -> char {
         print!("fetching {} in node {}", ith, self.to_node_print());
 
-        return match (&self.left, &self.right, &self.text, ith > self.weight) {
+        return match (&self.left, &self.right, &self.text, ith >= self.weight) {
             (_, Some(right), _, true) => right.fetch(ith - self.weight),
             (Some(left), _, _, _) => left.fetch(ith),
-            (None, None, Some(text), _) => text.chars().nth(ith - 1).unwrap_or('F'),
+            (None, None, Some(text), _) => text.chars().nth(ith).unwrap_or('F'),
             (_, _, _, _) => 'F',
         };
     }
