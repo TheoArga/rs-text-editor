@@ -17,12 +17,28 @@ fn main() {
     print!(
         "{}th element real : {} ; from rope : {} \n",
         nb,
-        text.chars().nth(nb).unwrap_or_default(),
+        text.chars().nth(nb - 1).unwrap_or_default(),
         my_first_rope.fetch(nb)
     );
 
-    let r1: Rope = Rope::from_text("string1 ", 2);
-    let r2: Rope = Rope::from_text(" string2 \n", 2);
+    let st1 = "JOHN FORTNITE IS";
+    let st2 = "NOT A REAL PERSON";
+    let binding = (st1.to_owned() + st2);
+    let st3 = binding.as_str();
+
+    let r1: Rope = Rope::from_text(st1, 3);
+    let r2: Rope = Rope::from_text(st2, 6);
     let r3: Rope = Rope::concat(r1, r2);
-    print!("Concatenated rope : {}", r3.to_text())
+    print!("Concatenated rope : {}", r3.to_text());
+
+    print!("\n And the rope behind it : {}", r3.to_tree_print());
+
+    let nb2: usize = 1;
+
+    print!(
+        "{}th element real : {} ; from rope : {} \n",
+        nb2,
+        st3.chars().nth(nb2 - 1).unwrap_or_default(),
+        r3.fetch(nb2)
+    );
 }

@@ -96,7 +96,7 @@ impl Rope {
         return match (&self.left, &self.right, &self.text, ith > self.weight) {
             (_, Some(right), _, true) => right.fetch(ith - self.weight),
             (Some(left), _, _, _) => left.fetch(ith),
-            (None, None, Some(text), _) => text.chars().nth(ith).unwrap_or('F'),
+            (None, None, Some(text), _) => text.chars().nth(ith - 1).unwrap_or('F'),
             (_, _, _, _) => 'F',
         };
     }
@@ -120,7 +120,7 @@ impl Rope {
 
     pub fn concat(r1: Rope, r2: Rope) -> Rope {
         Rope {
-            weight: r1.weight(),
+            weight: r1._weight(),
             left: Some(Box::new(r1)),
             right: Some(Box::new(r2)),
             text: None,
