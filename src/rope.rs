@@ -1,12 +1,14 @@
+use std::rc::Rc;
+
 use egui::epaint::text;
 
+#[derive(Clone)]
 pub struct Rope {
-    left: Option<Box<Rope>>,
-    right: Option<Box<Rope>>,
+    left: Option<Rc<Rope>>,
+    right: Option<Rc<Rope>>,
     text: Option<String>,
     weight: usize,
 }
-
 /**
  * Characters are 0-indexed for all operations
  */
@@ -36,8 +38,8 @@ impl Rope {
             let strings: (&str, &str) = string.split_at(string.len() / 2);
 
             Rope {
-                left: Some(Box::new(Rope::from_text(strings.0, max_length))),
-                right: Some(Box::new(Rope::from_text(strings.1, max_length))),
+                left: Some(Rc::new(Rope::from_text(strings.0, max_length))),
+                right: Some(Rc::new(Rope::from_text(strings.1, max_length))),
                 text: None,
                 weight: strings.0.len(),
             }
@@ -151,9 +153,53 @@ impl Rope {
     pub fn concat(r1: Rope, r2: Rope) -> Rope {
         Rope {
             weight: r1._weight(),
-            left: Some(Box::new(r1)),
-            right: Some(Box::new(r2)),
+            left: Some(Rc::new(r1)),
+            right: Some(Rc::new(r2)),
             text: None,
         }
+    }
+
+    pub fn split(&self, index: usize) -> (Rope, Rope) {
+        if index < self.weight() {
+            if let (Some(left), Some(right), true) = (&self.left, &self.right, index < self.weight)
+            {
+                let split = left.split(index);
+                let w = split.1._weight();
+                return (
+                    split.0,
+                    Rope {
+                        left: Some(Rc::new(split.1)),
+                        right: Some(Rc::new(Rope {
+                            left: right.left.clone(),
+                            right: right.right.clone(),
+                            text: right.text.clone(),
+                            weight: right.weight.clone(),
+                        })),
+                        text: None,
+                        weight: w,
+                    },
+                );
+            }
+        } else if index > self.weight() {
+            if let (Some(left), Some(right), true) = (&self.left, &self.right, index < self.weight)
+            {
+                let split = right.split(index - self.weight);
+                let w = split.0.weight;
+                return (
+                    Rope {
+                        left: Some(left.clone()),
+                        right: Some(Rc::new(split.0)),
+                        text: None,
+                        weight: w,
+                    },
+                    split.1,
+                );
+            }
+        }
+
+        let nl: Rope = (*self.left.clone().unwrap()).clone();
+        let nr: Rope = (*self.right.clone().unwrap()).clone();
+
+        return (nl, nr);
     }
 }
