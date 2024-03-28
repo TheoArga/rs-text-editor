@@ -43,7 +43,7 @@ fn main() {
     );
     print!("Splitting (panic ensues ?) \n");
 
-    let ind: usize = 4;
+    let ind: usize = 2;
 
     let r45 = r3.split(ind);
     let r4 = r45.0;

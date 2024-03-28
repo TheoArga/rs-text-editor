@@ -46,33 +46,6 @@ impl Rope {
         }
     }
 
-    pub fn split_node(&self, split_at: usize) -> (Rope, Rope) {
-        assert!(<Option<String> as Clone>::clone(&self.text).is_some());
-        assert!(<Option<String> as Clone>::clone(&self.text).unwrap().len() < split_at);
-
-        let t0: String = <Option<String> as Clone>::clone(&self.text).unwrap();
-        let t_12: (_, _) = t0.split_at(split_at);
-        let t1: String = t_12.0.to_owned();
-        let t2: String = t_12.1.to_owned();
-        let w1 = t1.len();
-        let w2 = t2.len();
-
-        (
-            Rope {
-                left: None,
-                right: None,
-                text: Some(t1),
-                weight: w1,
-            },
-            Rope {
-                left: None,
-                right: None,
-                text: Some(t2),
-                weight: w2,
-            },
-        )
-    }
-
     pub fn to_text(&self) -> String {
         if let Some(txt) = &self.text {
             return txt.clone();
@@ -159,6 +132,33 @@ impl Rope {
         }
     }
 
+    pub fn split_node(&self, split_at: usize) -> (Rope, Rope) {
+        assert!(<Option<String> as Clone>::clone(&self.text).is_some());
+        assert!(<Option<String> as Clone>::clone(&self.text).unwrap().len() >= split_at);
+
+        let t0: String = <Option<String> as Clone>::clone(&self.text).unwrap();
+        let t_12: (_, _) = t0.split_at(split_at);
+        let t1: String = t_12.0.to_owned();
+        let t2: String = t_12.1.to_owned();
+        let w1 = t1.len();
+        let w2 = t2.len();
+
+        (
+            Rope {
+                left: None,
+                right: None,
+                text: Some(t1),
+                weight: w1,
+            },
+            Rope {
+                left: None,
+                right: None,
+                text: Some(t2),
+                weight: w2,
+            },
+        )
+    }
+
     pub fn split(&self, index: usize) -> (Rope, Rope) {
         if index < self.weight() {
             if let (Some(left), Some(right), true) = (&self.left, &self.right, index < self.weight)
@@ -197,8 +197,20 @@ impl Rope {
             }
         }
 
-        let nl: Rope = (*self.left.clone().unwrap()).clone();
-        let nr: Rope = (*self.right.clone().unwrap()).clone();
+        let nl: Rope;
+        let nr: Rope;
+
+        match (&self.left, &self.right) {
+            (Some(left), Some(right)) => {
+                nl = (*self.left.clone().unwrap()).clone();
+                nr = (*self.right.clone().unwrap()).clone();
+            }
+            (_, _) => {
+                let s = self.split_node(index);
+                nl = s.0;
+                nr = s.1;
+            }
+        }
 
         return (nl, nr);
     }
