@@ -9,6 +9,7 @@ static STATE: Lazy<app::GlobalState<State>> = Lazy::new(app::GlobalState::<State
 
 pub struct State {
     pub saved: bool,
+    pub rope: Rope,
     pub curFile: PathBuf,
 }
 
@@ -16,6 +17,7 @@ impl State {
     fn new(rope: Rope) -> Self {
         State {
             saved: true,
+            rope,
             curFile: PathBuf::new(),
         }
     }

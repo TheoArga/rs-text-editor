@@ -1,9 +1,9 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 #[derive(Clone)]
 pub struct Rope {
-    left: Option<Rc<Rope>>,
-    right: Option<Rc<Rope>>,
+    left: Option<Arc<Rope>>,
+    right: Option<Arc<Rope>>,
     text: Option<String>,
     weight: usize,
 }
@@ -36,8 +36,8 @@ impl Rope {
             let strings: (&str, &str) = string.split_at(string.len() / 2);
 
             Rope {
-                left: Some(Rc::new(Rope::from_text(strings.0, max_length))),
-                right: Some(Rc::new(Rope::from_text(strings.1, max_length))),
+                left: Some(Arc::new(Rope::from_text(strings.0, max_length))),
+                right: Some(Arc::new(Rope::from_text(strings.1, max_length))),
                 text: None,
                 weight: strings.0.len(),
             }
@@ -124,8 +124,8 @@ impl Rope {
     pub fn concat(r1: Rope, r2: Rope) -> Rope {
         Rope {
             weight: r1._weight(),
-            left: Some(Rc::new(r1)),
-            right: Some(Rc::new(r2)),
+            left: Some(Arc::new(r1)),
+            right: Some(Arc::new(r2)),
             text: None,
         }
     }
@@ -166,8 +166,8 @@ impl Rope {
                 return (
                     split.0,
                     Rope {
-                        left: Some(Rc::new(split.1)),
-                        right: Some(Rc::new(Rope {
+                        left: Some(Arc::new(split.1)),
+                        right: Some(Arc::new(Rope {
                             left: right.left.clone(),
                             right: right.right.clone(),
                             text: right.text.clone(),
@@ -186,7 +186,7 @@ impl Rope {
                 return (
                     Rope {
                         left: Some(left.clone()),
-                        right: Some(Rc::new(split.0)),
+                        right: Some(Arc::new(split.0)),
                         text: None,
                         weight: w,
                     },
