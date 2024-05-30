@@ -1,5 +1,7 @@
 mod rope;
+mod editor_window;
 use crate::rope::Rope;
+use crate::editor_window::*;
 
 fn main() {
     let text: String = String::from("The quick brown fox jumps over the lazy dog\n");
@@ -56,4 +58,8 @@ fn main() {
         r4.to_text(),
         r5.to_text()
     );
+
+    editor_window::init();
+
+
 }

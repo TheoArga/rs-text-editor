@@ -1,7 +1,5 @@
 use std::rc::Rc;
 
-use egui::epaint::text;
-
 #[derive(Clone)]
 pub struct Rope {
     left: Option<Rc<Rope>>,
@@ -201,7 +199,7 @@ impl Rope {
         let nr: Rope;
 
         match (&self.left, &self.right) {
-            (Some(left), Some(right)) => {
+            (Some(_left), Some(_right)) => {
                 nl = (*self.left.clone().unwrap()).clone();
                 nr = (*self.right.clone().unwrap()).clone();
             }
